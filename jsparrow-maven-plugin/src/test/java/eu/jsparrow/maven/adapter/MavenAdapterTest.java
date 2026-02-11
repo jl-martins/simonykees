@@ -115,6 +115,7 @@ public class MavenAdapterTest {
 		when(jsparrowTempDirectory.exists()).thenReturn(false);
 		when(jsparrowTempDirectory.mkdirs()).thenReturn(true);
 		when(jsparrowTempDirectory.getAbsolutePath()).thenReturn(absolutePath);
+		when(jsparrowTempDirectory.toPath()).thenReturn(directory.getRoot().toPath());
 
 		mavenAdapter.prepareWorkingDirectory("");
 
