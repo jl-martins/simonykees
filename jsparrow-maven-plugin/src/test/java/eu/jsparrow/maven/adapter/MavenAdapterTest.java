@@ -81,8 +81,6 @@ public class MavenAdapterTest {
 		final MavenParameters config = mock(MavenParameters.class);
 		when(config.getUseDefaultConfig()).thenReturn(false);
 		when(config.getMode()).thenReturn(""); //$NON-NLS-1$
-		when(config.getLicense()).thenReturn(""); //$NON-NLS-1$
-		when(config.getUrl()).thenReturn(""); //$NON-NLS-1$
 		when(config.getProfile()).thenReturn(""); //$NON-NLS-1$
 		when(config.getRuleId()).thenReturn(Optional.empty());
 		when(config.getStatisticsMetadata()).thenReturn(statisticsMetadata);
@@ -92,8 +90,6 @@ public class MavenAdapterTest {
 
 		verify(config).getUseDefaultConfig();
 		verify(config).getMode();
-		verify(config).getLicense();
-		verify(config).getUrl();
 		verify(config).getProfile();
 		verify(config).getSelectedSources();
 	}
@@ -160,18 +156,13 @@ public class MavenAdapterTest {
 
 	@Test
 	public void setUp_initialConfiguration() throws InterruptedException {
-		String expectedUrl = "https://localhost:8081";
-		String expectedLicenseKey = "license-key";
 		String expectedMode = "list-rules";
 		String expectedBootFrameworkDelegation = "javax.*,org.xml.*,sun.*,com.sun.*,jdk.internal.reflect,jdk.internal.reflect.*";
-		MavenParameters mavenParameters = new MavenParameters(expectedMode, expectedLicenseKey, expectedUrl);
+		MavenParameters mavenParameters = new MavenParameters(expectedMode);
 
 		mavenAdapter.setUpConfiguration(mavenParameters);
 
 		Map<String, String> configuration = mavenAdapter.getConfiguration();
-		assertTrue(configuration.containsKey("URL"));
-		assertEquals(expectedUrl, configuration.getOrDefault("URL", ""));
-		assertEquals(expectedLicenseKey, configuration.getOrDefault("LICENSE", ""));
 		assertEquals(expectedMode, configuration.getOrDefault("STANDALONE.MODE", expectedMode));
 		assertEquals(expectedBootFrameworkDelegation, configuration.get("org.osgi.framework.bootdelegation"));
 	}

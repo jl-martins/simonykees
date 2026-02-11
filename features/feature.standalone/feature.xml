@@ -9,11 +9,11 @@
       %description
    </description>
 
-   <copyright url="https://jsparrow.io/wp-content/uploads/Software-download-terms.pdf">
+   <copyright>
       %copyright
    </copyright>
 
-   <license url="https://jsparrow.io/wp-content/uploads/EULA.pdf">
+   <license url="https://raw.githubusercontent.com/Splendit/simonykees/refs/heads/develop/LICENSE">
       %license
    </license>
 

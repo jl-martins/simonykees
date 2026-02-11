@@ -1,13 +1,7 @@
 package eu.jsparrow.standalone;
 
-import java.io.File;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.Optional;
-
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.osgi.service.environment.EnvironmentInfo;
-import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceReference;
@@ -15,7 +9,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import eu.jsparrow.i18n.Messages;
-import eu.jsparrow.standalone.ConfigFinder.ConfigType;
 import eu.jsparrow.standalone.exceptions.StandaloneException;
 import eu.jsparrow.standalone.util.ProxyUtils;
 
@@ -33,13 +26,9 @@ public class Activator implements BundleActivator {
 
 	private static final String LIST_RULES_SELECTED_ID_KEY = "LIST.RULES.SELECTED.ID"; //$NON-NLS-1$
 	private static final String STANDALONE_MODE_KEY = "STANDALONE.MODE"; //$NON-NLS-1$
-	private static final String LICENSE_KEY = "LICENSE"; //$NON-NLS-1$
-	private static final String AGENT_URL = "URL"; //$NON-NLS-1$
 
 	private RefactoringInvoker refactoringInvoker;
 	ListRulesUtil listRulesUtil;
-
-	StandaloneLicenseUtilService licenseService;
 
 	public Activator() {
 		this(new RefactoringInvoker(), new ListRulesUtil());
@@ -67,7 +56,7 @@ public class Activator implements BundleActivator {
 		// Put both together because it looks nicer
 		String startMessage = String.format("%s", Messages.Activator_start); //$NON-NLS-1$
 		logger.info(startMessage);
-		registerShutdownHook(context);
+		registerShutdownHook();
 		ProxyUtils.configureProxy(context);
 		StandaloneMode mode = parseMode(context);
 		String listRulesId = context.getProperty(LIST_RULES_SELECTED_ID_KEY);
@@ -83,9 +72,6 @@ public class Activator implements BundleActivator {
 			break;
 		case LIST_RULES_SHORT:
 			listRulesUtil.listRulesShort();
-			break;
-		case LICENSE_INFO:
-			printLicenseInfo(context);
 			break;
 		case TEST:
 			break;
@@ -110,23 +96,10 @@ public class Activator implements BundleActivator {
 			logger.debug(e.getMessage(), e);
 			logger.error(e.getMessage());
 		} finally {
-			cleanUp(context);
+			cleanUp();
 		}
 
 		logger.info(Messages.Activator_stop);
-	}
-
-	private void printLicenseInfo(BundleContext context) {
-		licenseService = getStandaloneLicenseUtilService();
-		String key = getLicenseKey(context);
-		String agentUrl = getAgentUrl(context);
-		try {
-			licenseService.licenseInfo(key, agentUrl);
-		} catch (StandaloneException e) {
-			logger.debug(e.getMessage(), e);
-			logger.error(e.getMessage());
-			setExitErrorMessage(context, e.getMessage());
-		}
 	}
 
 	private void listRules(String listRulesId) {
@@ -137,25 +110,9 @@ public class Activator implements BundleActivator {
 		}
 	}
 
-	/**
-	 * @see Activator#runInReportMode(BundleContext)
-	 * 
-	 * @param context
-	 */
 	private void refactor(BundleContext context) {
-		String key = getLicenseKey(context);
-		String agentUrl = getAgentUrl(context);
-		licenseService = getStandaloneLicenseUtilService();
-
 		try {
-			boolean validLicense = licenseService.validate(key, agentUrl);
-			if (validLicense) {
-				refactoringInvoker.startRefactoring(context);
-			} else {
-				String message = Messages.StandaloneActivator_noValidLicenseFound;
-				logger.error(message);
-				setExitErrorMessageAndCleanUp(context, message);
-			}
+			refactoringInvoker.startRefactoring(context);
 		} catch (StandaloneException e) {
 			logger.debug(e.getMessage(), e);
 			logger.error(e.getMessage());
@@ -163,13 +120,6 @@ public class Activator implements BundleActivator {
 		}
 	}
 
-	/**
-	 * Contrary to {@link Activator#refactor(BundleContext)}, this method does
-	 * not stop JMP if the license is invalid.
-	 * 
-	 * @param context
-	 *            all the settings etc.
-	 */
 	private void runInReportMode(BundleContext context) {
 		try {
 			refactoringInvoker.runInReportMode(context);
@@ -180,17 +130,12 @@ public class Activator implements BundleActivator {
 		}
 	}
 
-	private void registerShutdownHook(BundleContext context) {
+	private void registerShutdownHook() {
 		Runtime.getRuntime()
-			.addShutdownHook(new Thread(() -> cleanUp(context)));
+			.addShutdownHook(new Thread(this::cleanUp));
 	}
 
-	private void cleanUp(BundleContext context) {
-		StandaloneMode mode = parseMode(context);
-		if (licenseService != null && (mode == StandaloneMode.REFACTOR || mode == StandaloneMode.LICENSE_INFO)) {
-			licenseService.stop(getAgentUrl(context));
-		}
-
+	private void cleanUp() {
 		refactoringInvoker.cleanUp();
 	}
 
@@ -219,7 +164,7 @@ public class Activator implements BundleActivator {
 	}
 
 	public void setExitErrorMessageAndCleanUp(BundleContext ctx, String exitMessage) {
-		cleanUp(ctx);
+		cleanUp();
 
 		setExitErrorMessage(ctx, exitMessage);
 	}
@@ -232,57 +177,5 @@ public class Activator implements BundleActivator {
 		} else {
 			System.setProperty(key, exitMessage);
 		}
-	}
-
-	private String getLicenseKey(BundleContext context) {
-		YAMLStandaloneConfig yamlStandaloneConfig = tryLoadStandaloneConfig();
-		String licenseKey = ""; //$NON-NLS-1$
-		if (yamlStandaloneConfig != null) {
-			licenseKey = yamlStandaloneConfig.getKey();
-		}
-		String cmdlineLicenseKey = context.getProperty(LICENSE_KEY);
-		if (cmdlineLicenseKey != null) {
-			logger.info(Messages.RefactoringInvoker_OverridingConfigWithCommandLine);
-			licenseKey = cmdlineLicenseKey;
-		}
-		return licenseKey;
-	}
-
-	private String getAgentUrl(BundleContext context) {
-		YAMLStandaloneConfig yamlStandaloneConfig = tryLoadStandaloneConfig();
-		String url = ""; //$NON-NLS-1$
-		if (yamlStandaloneConfig != null) {
-			url = yamlStandaloneConfig.getUrl();
-		}
-
-		String cmdlineIp = context.getProperty(AGENT_URL);
-		if (cmdlineIp != null) {
-			logger.info(Messages.RefactoringInvoker_OverridingConfigWithCommandLine);
-			url = cmdlineIp;
-		}
-		return url;
-	}
-
-	private YAMLStandaloneConfig tryLoadStandaloneConfig() {
-		Path filePath = Paths.get(System.getProperty("user.home"), ".config", "jsparrow-standalone"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-
-		YAMLStandaloneConfig yamlStandaloneConfig = null;
-
-		Optional<String> configFile = new ConfigFinder().getYAMLFilePath(filePath, ConfigType.CONFIG_FILE);
-		if (configFile.isPresent()) {
-			try {
-				yamlStandaloneConfig = YAMLStandaloneConfig.load(new File(configFile.get()));
-			} catch (YAMLStandaloneConfigException e) {
-				logger.warn(Messages.RefactoringInvoker_ConfigContainsInvalidSyntax);
-			}
-		} else {
-			logger.info("No config.yaml file found in '{}'", filePath); //$NON-NLS-1$
-		}
-
-		return yamlStandaloneConfig;
-	}
-
-	StandaloneLicenseUtilService getStandaloneLicenseUtilService() {
-		return StandaloneLicenseUtil.get();
 	}
 }

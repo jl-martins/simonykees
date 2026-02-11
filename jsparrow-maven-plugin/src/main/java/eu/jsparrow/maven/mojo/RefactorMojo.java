@@ -88,12 +88,6 @@ public class RefactorMojo extends AbstractMojo {
 	protected boolean defaultConfiguration;
 
 	/**
-	 * Specify the license key to use.
-	 */
-	@Parameter(property = "license")
-	private String license;
-
-	/**
 	 * Specify the GLOB expression patterns relative to the project root
 	 * directory for selecting the sources to refactor. Use line breaks to
 	 * specify multiple glob patterns. If not specified, all Java sources in the
@@ -108,12 +102,6 @@ public class RefactorMojo extends AbstractMojo {
 	 */
 	@Parameter(defaultValue = "**", property = "selectedSources")
 	private String selectedSources;
-
-	/**
-	 * Specify the license server to use.
-	 */
-	@Parameter(property = "url")
-	private String url;
 
 	@Parameter(property = "startTime")
 	private String startTime;
@@ -140,8 +128,8 @@ public class RefactorMojo extends AbstractMojo {
 		String start = startTime == null ? Instant.now()
 			.toString() : startTime;
 		StatisticsMetadata statisticsMetadata = new StatisticsMetadata(start, repoOwner, repoName);
-		MavenParameters parameters = new MavenParameters(mode, license, url, profile,
-				defaultConfiguration, statisticsMetadata, sendStatistics, selectedSources, tempWorkspace);
+		MavenParameters parameters = new MavenParameters(mode, profile, defaultConfiguration, statisticsMetadata,
+				sendStatistics, selectedSources, tempWorkspace);
 		MavenAdapter mavenAdapter = new MavenAdapter(project, log);
 		List<MavenProject> projects = mavenSession.getProjects();
 		BundleStarter bundleStarter = new BundleStarter(log);
