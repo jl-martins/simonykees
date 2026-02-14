@@ -8,7 +8,6 @@ public enum StandaloneMode {
 	REPORT,
 	LIST_RULES,
 	LIST_RULES_SHORT,
-	LICENSE_INFO,
 	NONE;
 
 	@SuppressWarnings("nls")
@@ -29,8 +28,6 @@ public enum StandaloneMode {
 			return LIST_RULES;
 		case "LIST_RULES_SHORT":
 			return LIST_RULES_SHORT;
-		case "LICENSE_INFO":
-			return LICENSE_INFO;
 		default:
 			return NONE;
 

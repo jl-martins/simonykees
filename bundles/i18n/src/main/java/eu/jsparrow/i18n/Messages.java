@@ -563,7 +563,6 @@ public class Messages extends NLS {
 	public static String SimonykeesUpdateLicenseDialog_update_license_dialog_label;
 	public static String SimonykeesUpdateLicenseDialog_update_llicense_dialog_button;
 	public static String SimonykeesUpdateLicenseDialog_update_license_dialog_group_title;
-	public static String StandaloneActivator_noValidLicenseFound;
 	public static String StandaloneConfig_collectCompilationUnits;
 	public static String EclipseProjectFileManager_directoryBackupDone;
 	public static String EclipseProjectFileManager_directoryRestoreDone;
@@ -575,9 +574,6 @@ public class Messages extends NLS {
 	public static String StandaloneConfig_noRefactoringStates;
 	public static String StandaloneConfig_unusedClassExcludesWarning;
 	public static String StandaloneConfig_unusedPackageExcludesWarning;
-	public static String StandaloneLicenseUtil_expirationDate;
-	public static String StandaloneLicenseUtil_isValid;
-	public static String StandaloneLicenseUtil_licenseType;
 	public static String StandardLoggerRule_description;
 	public static String StandardLoggerRule_name;
 	public static String StatementLambdaToExpressionRule_description;

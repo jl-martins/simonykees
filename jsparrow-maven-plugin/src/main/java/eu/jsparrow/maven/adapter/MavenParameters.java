@@ -24,30 +24,21 @@ public class MavenParameters {
 	private String mode;
 	private boolean useDefaultConfig = false;
 	private String ruleId;
-	private String license = ""; //$NON-NLS-1$
-	private String url = ""; //$NON-NLS-1$
 	private StatisticsMetadata statisticsMetadata;
 	private boolean sendStatistics;
 	private String selectedSources;
 	private String reportDestinationPath;
 	private String tempWorkspaceLocation;
 
-	public MavenParameters(String mode, String license, String url, String profile, boolean useDefault,
-			StatisticsMetadata statisticsMetadata, boolean sendStatistics, String selectedSources,
-			String tempWorkspaceLocation) {
-		this(mode, license, url);
+	public MavenParameters(String mode, String profile, boolean useDefault, StatisticsMetadata statisticsMetadata,
+			boolean sendStatistics, String selectedSources, String tempWorkspaceLocation) {
+		this.mode = mode;
 		this.profile = profile;
 		this.useDefaultConfig = useDefault;
 		this.statisticsMetadata = statisticsMetadata;
 		this.sendStatistics = sendStatistics;
 		this.selectedSources = selectedSources;
 		this.tempWorkspaceLocation = tempWorkspaceLocation;
-	}
-
-	public MavenParameters(String mode, String license, String url) {
-		this(mode);
-		this.license = license;
-		this.url = url;
 	}
 
 	public MavenParameters(String mode) {
@@ -73,14 +64,6 @@ public class MavenParameters {
 	public Optional<String> getRuleId() {
 		return Optional.ofNullable(ruleId)
 			.filter(s -> !s.isEmpty());
-	}
-
-	public String getLicense() {
-		return license;
-	}
-
-	public String getUrl() {
-		return url;
 	}
 
 	public StatisticsMetadata getStatisticsMetadata() {

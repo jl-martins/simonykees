@@ -37,8 +37,6 @@ public class ActivatorTest {
 
 	private ListRulesUtil listRulesUtil;
 
-	private StandaloneLicenseUtilService licenseService;
-
 	@BeforeAll
 	public static void setUpClass() {
 
@@ -53,8 +51,6 @@ public class ActivatorTest {
 		refactoringInvoker = mock(RefactoringInvoker.class);
 
 		listRulesUtil = mock(ListRulesUtil.class);
-
-		licenseService = mock(StandaloneLicenseUtilService.class);
 
 		activator = new TestableActivator();
 	}
@@ -78,15 +74,6 @@ public class ActivatorTest {
 	}
 
 	@Test
-	public void start_withLicenseInfo_invokesLicenseInfo() throws Exception {
-		when(context.getProperty(STANDALONE_MODE_KEY)).thenReturn("LICENSE_INFO"); //$NON-NLS-1$
-
-		activator.start(context);
-
-		verify(licenseService).licenseInfo(anyString(), anyString());
-	}
-
-	@Test
 	public void start_withListRulesWithSelectedId_invokesListSelectedId() throws Exception {
 		when(context.getProperty(STANDALONE_MODE_KEY)).thenReturn("LIST_RULES"); //$NON-NLS-1$
 		String ruleId = "doesntMatter"; //$NON-NLS-1$
@@ -98,9 +85,8 @@ public class ActivatorTest {
 	}
 
 	@Test
-	public void start_withRefactorAndValidLicense_invokesRefactoringInvoker() throws Exception {
+	public void start_withRefactor_invokesRefactoringInvoker() throws Exception {
 		when(context.getProperty(STANDALONE_MODE_KEY)).thenReturn("REFACTOR"); //$NON-NLS-1$
-		when(licenseService.validate(anyString(), anyString())).thenReturn(true);
 
 		activator.start(context);
 
@@ -108,21 +94,10 @@ public class ActivatorTest {
 	}
 
 	@Test
-	public void start_withRefactorAndInvalidLicense_refactoringInvokerNotInvoked() throws Exception {
-		when(context.getProperty(STANDALONE_MODE_KEY)).thenReturn("REFACTOR"); //$NON-NLS-1$
-		when(licenseService.validate(anyString(), anyString())).thenReturn(false);
-
-		activator.start(context);
-
-		verify(refactoringInvoker, never()).startRefactoring(any());
-	}
-
-	@Test
-	public void start_withReportAndValidLicense_invokesRunInDemoMode() throws Exception {
+	public void start_withReport_invokesRunInDemoMode() throws Exception {
 		when(context.getProperty(STANDALONE_MODE_KEY)).thenReturn("REPORT"); //$NON-NLS-1$
 
 		activator.start(context);
-		verify(licenseService, never()).validate(anyString(), anyString());
 		verify(refactoringInvoker).runInReportMode(any());
 	}
 
@@ -142,11 +117,6 @@ public class ActivatorTest {
 
 		public TestableActivator() {
 			super(ActivatorTest.this.refactoringInvoker, ActivatorTest.this.listRulesUtil);
-		}
-
-		@Override
-		StandaloneLicenseUtilService getStandaloneLicenseUtilService() {
-			return ActivatorTest.this.licenseService;
 		}
 	}
 }

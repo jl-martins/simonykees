@@ -9,11 +9,11 @@
       %description
    </description>
 
-   <copyright url="https://jsparrow.io/wp-content/uploads/Software-download-terms.pdf">
+   <copyright>
       %copyright
    </copyright>
 
-   <license url="https://jsparrow.io/wp-content/uploads/EULA.pdf">
+   <license url="https://raw.githubusercontent.com/Splendit/simonykees/refs/heads/develop/LICENSE">
       %license
    </license>
 
@@ -59,20 +59,6 @@
 
    <plugin
          id="eu.jsparrow.rules.api"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="eu.jsparrow.license.api"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="eu.jsparrow.license.netlicensing"
          download-size="0"
          install-size="0"
          version="0.0.0"

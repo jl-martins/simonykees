@@ -1,12 +1,10 @@
 package eu.jsparrow.maven.adapter;
 
-import static eu.jsparrow.maven.adapter.ConfigurationKeys.AGENT_URL;
 import static eu.jsparrow.maven.adapter.ConfigurationKeys.CONFIG_FILE_OVERRIDE;
 import static eu.jsparrow.maven.adapter.ConfigurationKeys.DEBUG_ENABLED;
 import static eu.jsparrow.maven.adapter.ConfigurationKeys.FORMATTING_FILE;
 import static eu.jsparrow.maven.adapter.ConfigurationKeys.FRAMEWORK_STORAGE_VALUE;
 import static eu.jsparrow.maven.adapter.ConfigurationKeys.INSTANCE_DATA_LOCATION_CONSTANT;
-import static eu.jsparrow.maven.adapter.ConfigurationKeys.LICENSE_KEY;
 import static eu.jsparrow.maven.adapter.ConfigurationKeys.LIST_RULES_SELECTED_ID;
 import static eu.jsparrow.maven.adapter.ConfigurationKeys.OSGI_INSTANCE_AREA_CONSTANT;
 import static eu.jsparrow.maven.adapter.ConfigurationKeys.PROXY_SETTINGS;
@@ -169,8 +167,6 @@ public class MavenAdapter {
 		configuration.put(STANDALONE_MODE_KEY, config.getMode());
 		configuration.put(SELECTED_PROFILE, config.getProfile());
 		configuration.put(USE_DEFAULT_CONFIGURATION, Boolean.toString(useDefaultConfig));
-		configuration.put(LICENSE_KEY, config.getLicense());
-		configuration.put(AGENT_URL, config.getUrl());
 		configuration.put(SELECTED_SOURCES, config.getSelectedSources());
 
 		StatisticsMetadata statisticsMetadata = config.getStatisticsMetadata();

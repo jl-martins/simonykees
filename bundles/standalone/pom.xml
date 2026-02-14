@@ -21,8 +21,6 @@
 		<standalone.properties.sourceFile></standalone.properties.sourceFile>
 		<proguard.extra.options>
 			-libraryjars
-			${project.basedir}/../license.api/target/eu.jsparrow.license.api-${project.version}_proguard_base.jar
-			-libraryjars
 			${project.basedir}/../rules.api/target/eu.jsparrow.rules.api-${project.version}_proguard_base.jar
 			-libraryjars
 			${project.basedir}/../logging/target/eu.jsparrow.logging-${project.version}_proguard_base.jar
@@ -54,10 +52,6 @@
 							<exclusion>
 								<groupId>at.splendit</groupId>
 								<artifactId>eu.jsparrow.rules.api</artifactId>
-							</exclusion>
-							<exclusion>
-								<groupId>at.splendit</groupId>
-								<artifactId>eu.jsparrow.license.api</artifactId>
 							</exclusion>
 							<exclusion>
 								<groupId>at.splendit</groupId>

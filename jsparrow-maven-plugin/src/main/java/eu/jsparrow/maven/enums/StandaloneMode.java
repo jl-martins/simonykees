@@ -5,6 +5,5 @@ public enum StandaloneMode {
 	REFACTOR,
 	REPORT,
 	LIST_RULES,
-	LIST_RULES_SHORT,
-	LICENSE_INFO;
+	LIST_RULES_SHORT;
 }
